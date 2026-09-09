@@ -1,0 +1,14 @@
+﻿/vendor/
+/.env
+/.phpunit.result.cache
+/storage/*.key
+/storage/app/private/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+/bootstrap/cache/*
+/public/hot
+/public/storage
+database/database.sqlite
