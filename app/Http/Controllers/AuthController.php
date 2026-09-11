@@ -19,7 +19,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($data);
-        $token = $user->createToken('api')->plainTextToken;
+        $token = $user->createToken('api', ['*'], now()->addMinutes(config('sanctum.default_token_minutes', 1440)))->plainTextToken;
 
         return response()->json([
             'user' => $user,
@@ -44,7 +44,7 @@ class AuthController extends Controller
         }
 
         $user->tokens()->where('name', 'api')->delete();
-        $token = $user->createToken('api')->plainTextToken;
+        $token = $user->createToken('api', ['*'], now()->addMinutes(config('sanctum.default_token_minutes', 1440)))->plainTextToken;
 
         return response()->json([
             'user' => $user,
@@ -60,6 +60,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Signed out.']);
     }
 }
+
 
 
 

@@ -38,10 +38,31 @@ class BucketController extends Controller
     {
         $this->assertOwner($request, $bucket);
 
+        $objects = $bucket->objects()
+            ->latest()
+            ->limit(50)
+            ->get(['id', 'bucket_id', 'original_name', 'mime_type', 'size', 'checksum', 'visibility', 'created_at'])
+            ->map(fn ($object) => [
+                'id' => $object->id,
+                'bucket_id' => $object->bucket_id,
+                'name' => $object->original_name,
+                'mime_type' => $object->mime_type,
+                'size' => $object->size,
+                'checksum' => $object->checksum,
+                'visibility' => $object->visibility,
+                'created_at' => $object->created_at,
+                'public_url' => $object->visibility === 'public'
+                    ? route('objects.public-download', ['object' => $object->id])
+                    : null,
+            ]);
+
         return response()->json([
-            'data' => $bucket->loadCount('objects')->load([
-                'objects' => fn ($query) => $query->latest()->limit(50),
-            ]),
+            'data' => [
+                'id' => $bucket->id,
+                'name' => $bucket->name,
+                'objects_count' => $bucket->objects()->count(),
+                'objects' => $objects,
+            ],
         ]);
     }
 
@@ -50,5 +71,3 @@ class BucketController extends Controller
         abort_unless($bucket->user_id === $request->user()->id, 404);
     }
 }
-
-

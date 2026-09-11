@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessTokenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BucketController;
 use App\Http\Controllers\ObjectController;
@@ -17,16 +18,37 @@ Route::get('objects/{object}/private', [ObjectController::class, 'privateDownloa
     ->middleware('signed')
     ->name('objects.private-download');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('auth/logout', [AuthController::class, 'logout']);
-    Route::apiResource('buckets', BucketController::class)->only(['index', 'store', 'show']);
-    Route::post('buckets/{bucket}/objects', [ObjectController::class, 'store'])
-        ->middleware('throttle:uploads');
-    Route::get('objects/{object}', [ObjectController::class, 'show']);
-    Route::delete('objects/{object}', [ObjectController::class, 'destroy']);
-    Route::patch('objects/{object}/visibility', [ObjectController::class, 'visibility']);
-    Route::post('objects/{object}/private-url', [ObjectController::class, 'privateUrl'])
-        ->middleware('throttle:private-url');
+Route::post('auth/logout', [AuthController::class, 'logout'])
+    ->middleware('auth:sanctum');
+
+Route::middleware(['auth:sanctum', 'abilities:tokens:manage'])
+    ->prefix('access-tokens')
+    ->group(function () {
+        Route::get('/', [AccessTokenController::class, 'index']);
+        Route::post('/', [AccessTokenController::class, 'store']);
+        Route::delete('/{token}', [AccessTokenController::class, 'destroy']);
+    });
+
+Route::middleware(['auth:sanctum', 'abilities:buckets:read'])->group(function () {
+    Route::get('buckets', [BucketController::class, 'index']);
+    Route::get('buckets/{bucket}', [BucketController::class, 'show']);
 });
 
+Route::post('buckets', [BucketController::class, 'store'])
+    ->middleware(['auth:sanctum', 'abilities:buckets:write']);
 
+Route::post('buckets/{bucket}/objects', [ObjectController::class, 'store'])
+    ->middleware(['auth:sanctum', 'abilities:objects:write'])
+    ->middleware('throttle:uploads');
+
+Route::get('objects/{object}', [ObjectController::class, 'show'])
+    ->middleware(['auth:sanctum', 'abilities:objects:read']);
+
+Route::delete('objects/{object}', [ObjectController::class, 'destroy'])
+    ->middleware(['auth:sanctum', 'abilities:objects:delete']);
+
+Route::patch('objects/{object}/visibility', [ObjectController::class, 'visibility'])
+    ->middleware(['auth:sanctum', 'abilities:objects:write']);
+
+Route::post('objects/{object}/private-url', [ObjectController::class, 'privateUrl'])
+    ->middleware(['auth:sanctum', 'abilities:objects:read', 'throttle:private-url']);

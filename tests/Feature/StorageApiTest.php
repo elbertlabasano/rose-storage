@@ -67,10 +67,44 @@ class StorageApiTest extends TestCase
 
         $this->get('/api/objects/'.$object->id.'/public')->assertNotFound();
     }
+
+    public function test_scoped_access_tokens_limit_operations(): void
+    {
+        Storage::fake('local');
+
+        $fullToken = $this->postJson('/api/auth/register', [
+            'name' => 'Token Owner',
+            'email' => 'token-owner@example.test',
+            'password' => 'a-strong-password',
+            'password_confirmation' => 'a-strong-password',
+        ])->assertCreated()->json('token');
+
+        $bucket = $this->withToken($fullToken)
+            ->postJson('/api/buckets', ['name' => 'scoped'])
+            ->assertCreated()
+            ->json('data.id');
+
+        $scopedToken = $this->withToken($fullToken)
+            ->postJson('/api/access-tokens', [
+                'name' => 'Uploader only',
+                'abilities' => ['objects:write'],
+                'expires_in' => 3600,
+            ])
+            ->assertCreated()
+            ->json('token');
+
+        $this->app['auth']->forgetGuards();
+
+        $this->withToken($scopedToken)
+            ->getJson('/api/buckets')
+            ->assertForbidden();
+
+        $this->app['auth']->forgetGuards();
+
+        $this->withToken($scopedToken)
+            ->post('/api/buckets/'.$bucket.'/objects', [
+                'file' => UploadedFile::fake()->create('scoped.txt', 1, 'text/plain'),
+            ])
+            ->assertCreated();
+    }
 }
-
-
-
-
-
-

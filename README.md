@@ -101,7 +101,7 @@ Content-Type: application/json
 - Files are written to a private disk and streamed by Laravel with X-Content-Type-Options: nosniff.
 - Private URLs are signed with APP_KEY, expire server-side, and are rate-limited when issued.
 - Authentication, uploads, and URL issuance have separate rate limits.
-- Login replaces prior api tokens for that user; logout revokes the current token, and Sanctum tokens expire after SANCTUM_TOKEN_EXPIRATION minutes (one day by default).
+- Login replaces prior api tokens for that user; logout revokes the current token, and Sanctum tokens expire after SANCTUM_DEFAULT_TOKEN_MINUTES (one day by default).
 - Keep APP_DEBUG=false in production, serve only over HTTPS, rotate APP_KEY only with a migration plan, and use a least-privilege IAM user for S3.
 - For production S3, use bucket-level public access blocks. The API's public URL is intentionally an application URL, not a public S3 object URL.
 
@@ -111,3 +111,41 @@ Content-Type: application/json
 php artisan test
 php artisan route:list --path=api
 ~~~
+
+
+Never commit .env.
+Keep your S3 bucket private and enable Block Public Access.
+Use a least-privilege AWS IAM user.
+Use HTTPS only.
+Keep private URLs short-lived, such as 15–60 minutes.
+Add storage quotas to prevent users filling the disk.
+Consider antivirus/content scanning for untrusted uploads.
+Never expose Sanctum bearer tokens in browser JavaScript or URLs.
+## Dashboard and access tokens
+
+Open `/dashboard` after starting the app. Sign in with an API account to browse buckets, preview public images, upload files, create buckets, and request temporary links for private objects.
+
+The dashboard also creates scoped Sanctum access tokens. A token is displayed only once. Give a client only the permissions it needs:
+
+~~~
+POST /api/access-tokens
+Authorization: Bearer <full-access-token>
+Content-Type: application/json
+
+{
+  "name": "Image uploader",
+  "abilities": ["buckets:read", "objects:write"],
+  "expires_in": 86400
+}
+~~~
+
+Use the returned `token` as a bearer token from a core PHP client. Available abilities are `buckets:read`, `buckets:write`, `objects:read`, `objects:write`, `objects:delete`, and `tokens:manage`. List or revoke tokens with `GET /api/access-tokens` and `DELETE /api/access-tokens/{id}`. Never put an access token in a public URL or commit it to source control.
+## Local admin seeder
+
+Set the optional `SEED_ADMIN_*` values in `.env`, then run:
+
+~~~powershell
+php artisan db:seed
+~~~
+
+The local defaults are `admin@example.com` / `ChangeMeNow!123`. Change `SEED_ADMIN_PASSWORD` before using the seeder. The seeder is disabled when `APP_ENV=production`.
