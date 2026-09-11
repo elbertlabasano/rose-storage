@@ -149,3 +149,5 @@ php artisan db:seed
 ~~~
 
 The local defaults are `admin@example.com` / `ChangeMeNow!123`. Change `SEED_ADMIN_PASSWORD` before using the seeder. The seeder is disabled when `APP_ENV=production`.
+
+& "D:\WebServer\php\php.exe" artisan serve --port=8006
