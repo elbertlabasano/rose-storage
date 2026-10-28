@@ -4,6 +4,26 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use App\Services\IncrementalBackupService;
 
+Artisan::command('sso:link {email : Existing local account email} {idcode : Exact employee code; preserve leading zeros}', function () {
+    $user = \App\Models\User::where('email', $this->argument('email'))->first();
+    $code = $this->argument('idcode');
+    if (! $user || ! is_string($code) || $code === '' || trim($code) !== $code || strlen($code) > 64) {
+        $this->error('An existing account and an exact employee code (up to 64 characters) are required.');
+        return 1;
+    }
+    if ($user->keycloak_subject !== null && (string) $user->idcode !== $code) {
+        $this->error('This account is already linked. Review its identity before changing its employee code.');
+        return 1;
+    }
+    if (\App\Models\User::where('idcode', $code)->whereKeyNot($user->id)->exists()) {
+        $this->error('That employee code is already assigned to another account.');
+        return 1;
+    }
+    $user->forceFill(['idcode' => $code])->save();
+    $this->info('Employee code assigned to the existing storage account.');
+    return 0;
+})->purpose('Assign an employee code to an existing Rose Storage account without granting permissions');
+
 Artisan::command('storage:health', function () {
     $this->info('WIPS Storage is ready.');
 })->purpose('Check storage API availability');

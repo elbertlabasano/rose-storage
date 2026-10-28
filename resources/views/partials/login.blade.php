@@ -10,6 +10,7 @@
             <p class="eyebrow">YOUR ROSE STORAGE WORKSPACE</p>
             <h1>Good to have you back.</h1>
             <p class="signin-description">A little space for everything that matters.<br>Sign in to make yourself at home.</p>
+            @error('sso')<p class="sso-error" role="alert">{{ $message }}</p>@enderror
             <form id="loginForm" class="signin-form">
                 <label for="email">Email address</label>
                 <div class="signin-field">
@@ -25,6 +26,10 @@
                 <button id="loginSubmit" class="button signin-submit" type="submit"><span>Sign in to your storage</span><svg aria-hidden="true"><use href="#icon-arrow"/></svg></button>
             </form>
             <div id="loginStatus" role="status" aria-live="polite"></div>
+            @if(config('sso.enabled'))
+                <div class="sso-divider"><span>or continue with</span></div>
+                <a class="sso-signin button" href="{{ route('sso.redirect') }}"><img src="{{ asset('brand/rose-logo.png') }}" alt="" width="34" height="25"><span>Sign in with Rose Account</span><svg aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+            @endif
             <p class="signin-help">Need access or a password reset?<br><strong>Contact your Rose Storage administrator.</strong></p>
             <div class="signin-rule" aria-hidden="true"></div>
             <p class="signin-footnote"><svg aria-hidden="true"><use href="#icon-lock"/></svg> Your files. Your access. Your peace of mind.</p>

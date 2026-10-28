@@ -173,6 +173,13 @@ Content-Type: application/json
 ~~~
 
 Use the returned `token` as a bearer token from a core PHP client. Available abilities are `buckets:read`, `buckets:write`, `objects:read`, `objects:write`, `objects:delete`, and `tokens:manage`. List or revoke tokens with `GET /api/access-tokens` and `DELETE /api/access-tokens/{id}`. Never put an access token in a public URL or commit it to source control.
+## Rose Account SSO
+
+The login page also supports Rose Account sign-in through Keycloak. It links
+existing active users by `users.idcode`; it does not provision accounts or grant
+administrator access. See [SSO setup and account linking](docs/rose-sso.md) for
+the client settings, local HTTP callback, production HTTPS setup, and logout policy.
+
 ## Local admin seeder
 
 Set the optional `SEED_ADMIN_*` values in `.env`, then run:

@@ -13,11 +13,11 @@ class User extends Authenticatable
 
     protected $fillable = ['name', 'email', 'password'];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'idcode', 'keycloak_issuer', 'keycloak_subject'];
 
     protected function casts(): array
     {
-        return ['email_verified_at' => 'datetime', 'password' => 'hashed'];
+        return ['email_verified_at' => 'datetime', 'password' => 'hashed', 'is_active' => 'boolean'];
     }
 
     public function buckets()

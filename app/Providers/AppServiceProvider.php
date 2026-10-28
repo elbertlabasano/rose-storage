@@ -16,6 +16,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(
+            \SocialiteProviders\Manager\SocialiteWasCalled::class,
+            fn ($event) => $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class)
+        );
         RateLimiter::for('auth', fn (Request $request) =>
             Limit::perMinute(10)->by($request->ip())
         );

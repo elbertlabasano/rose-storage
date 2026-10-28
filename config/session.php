@@ -10,7 +10,7 @@ return [
     'table' => env('SESSION_TABLE', 'sessions'),
     'store' => env('SESSION_STORE'),
     'lottery' => [2, 100],
-    'cookie' => env('SESSION_COOKIE', 'wips-session'),
+    'cookie' => env('SESSION_COOKIE', 'rose_storage_session'),
     'path' => '/',
     'domain' => env('SESSION_DOMAIN'),
     'secure' => env('SESSION_SECURE_COOKIE'),

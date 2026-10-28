@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Rose Storage — Your workspace</title>
     <link rel="icon" href="{{ asset('brand/rose-logo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/rose-brand.css') }}">
@@ -119,6 +120,7 @@
     'use strict';
 
     var token = sessionStorage.getItem('wips_dashboard_token') || '';
+    var ssoSessionActive = @json(auth('web')->check() && session('rose_sso_authenticated') === true);
     var selectedBucket = null;
     var requestedView = location.pathname === '/backups' ? 'backupsView' : 'bucketsView';
     var loginPanel = document.getElementById('loginPanel');
@@ -294,6 +296,16 @@
     });
 
     document.getElementById('logoutButton').addEventListener('click', async function () {
+        if (ssoSessionActive) {
+            try {
+                var signedOut = await fetch('/auth/keycloak/logout', {
+                    method: 'POST', credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                });
+                if (!signedOut.ok && signedOut.status !== 401) throw new Error('Sign-out could not complete. Please try again.');
+                ssoSessionActive = false;
+            } catch (error) { setStatus(appStatus, error.message, true); return; }
+        }
         try { await api('/auth/logout', { method: 'POST' }); } catch (e) {}
         token = '';
         sessionStorage.removeItem('wips_dashboard_token');
@@ -481,7 +493,28 @@
     document.getElementById('downloadZipBackup').addEventListener('click', function () { downloadBackup('/backups/prepare/zip', true); });
     document.getElementById('refreshBackups').addEventListener('click', function () { loadBackups(); });
 
-    if (token) showApp(); else showLogin();
+    async function startDashboard() {
+        if (ssoSessionActive) {
+            try {
+                var response = await fetch('/auth/keycloak/session', {
+                    method: 'POST', credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                });
+                if (!response.ok) throw new Error('Your Rose Storage session could not be restored. Sign in again.');
+                var session = await response.json();
+                token = session.token;
+                sessionStorage.setItem('wips_dashboard_token', token);
+                showApp(session.user);
+                return;
+            } catch (error) {
+                token = ''; sessionStorage.removeItem('wips_dashboard_token');
+                showLogin(); setStatus(document.getElementById('loginStatus'), error.message, true);
+                return;
+            }
+        }
+        if (token) showApp(); else showLogin();
+    }
+    startDashboard();
 }());
 </script>
 </body>

@@ -9,3 +9,5 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 
 body.rose-dashboard{background:#fff9f4}.rose-dashboard #mainNav{display:none}@media(min-width:768px){.rose-dashboard #mainNav:not(.hidden){display:flex}}
+
+.sso-signin{width:100%;margin-top:22px;padding:13px 14px;gap:10px;font-size:12px;background:#fffaf5;border-color:#e8d2c2;color:#5d1616;box-shadow:none}.sso-signin:hover{background:#fff0e2;border-color:#d8b59c;color:#5d1616}.sso-signin img{width:34px;height:25px;object-fit:contain;background:#fff;border-radius:4px}.sso-signin>svg{width:18px;height:18px;margin-left:2px}.sso-signin>span{flex:initial;font-weight:500}.sso-divider{display:flex;align-items:center;gap:12px;margin-top:25px;color:#957669;font-size:11px}.sso-divider:before,.sso-divider:after{content:'';height:1px;flex:1;background:#e9dace}.sso-error{margin-top:18px;padding:10px 12px;border:1px solid #edc6be;background:#fff0ee;color:#a13a2b;font-size:11px;line-height:1.7;border-radius:8px;text-align:left}
