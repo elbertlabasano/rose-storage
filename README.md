@@ -1,5 +1,29 @@
 # WIPS Storage API
 
+## Manual encrypted upload backups
+
+Administrators can open `/backups` (or choose **Backups** in the dashboard) to
+download SQL and encrypted file ZIPs, open Drive, and re-download recent exports.
+Set `BACKUP_ADMIN_USER_IDS` to the authorized account IDs. SQL requires the configured
+`BACKUP_MYSQL_DUMP_BINARY`. `BACKUP_GOOGLE_DRIVE_FOLDER_ID` is an optional folder
+link only; uploads remain manual. SQL exports are not encrypted.
+
+Set `BACKUP_ZIP_PASSWORD` in `.env` to a password of at least 12 characters, then
+run `php artisan storage:backup` without prompts. The command saves an AES-256 encrypted ZIP in
+`storage/app/private/backups` and prints its full path. Upload it to Google Drive
+yourself. No Google API credentials, automatic schedule, or server-side upload is used.
+
+The first ZIP includes all registered uploads; later ZIPs include new/changed files.
+All entry contents, including the manifest and recovery instructions, are encrypted.
+ZIP entry names remain visible. Keep every required incremental ZIP and its password,
+plus a separate database backup. Keep `.env` private and preserve old passwords if you change the setting.
+Use an AES-capable ZIP extractor. Temporary disk space must fit sources plus the ZIP.
+
+`php artisan storage:backup-status` reports local export progress, not confirmed
+Google Drive uploads. Use `--limit=100` for smaller archives; the default includes
+all pending files. See [manual backup instructions](docs/manual-backups.md) for
+setup, recovery, and retention details. PHP ZIP with AES support is required.
+
 A small Laravel object-storage API with the core S3-style workflow:
 
 - authenticated users create buckets;
@@ -12,7 +36,7 @@ A small Laravel object-storage API with the core S3-style workflow:
 
 - PHP 8.2+
 - Composer
-- SQLite (default) or MySQL
+- MySQL or MariaDB (local default); SQLite is used for isolated tests
 - The PHP fileinfo extension
 
 ## Setup
@@ -21,16 +45,16 @@ A small Laravel object-storage API with the core S3-style workflow:
 composer install
 cp .env.example .env
 php artisan key:generate
-mkdir -p database
-touch database/database.sqlite
 php artisan migrate
 php artisan serve
 ~~~
 
-On Windows PowerShell, create the SQLite file with:
+Before running migrations, create the MySQL database and configure `DB_*` in `.env`.
+The local defaults use `127.0.0.1:3306`, database `rose_storage`, user `root`, and
+an empty password for local XAMPP. Use your server's credentials when deploying.
 
 ~~~
-New-Item -ItemType File database/database.sqlite
+CREATE DATABASE rose_storage CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ~~~
 
 Set APP_URL to the URL clients will use. The default local disk stores files under storage/app/private, which is deliberately not web-readable. To use S3 or an S3-compatible service, set FILESYSTEM_DISK=s3 and the normal AWS_* variables. Keep the bucket private; the Laravel download endpoints enforce visibility and signatures.
@@ -106,6 +130,15 @@ Content-Type: application/json
 - For production S3, use bucket-level public access blocks. The API's public URL is intentionally an application URL, not a public S3 object URL.
 
 ## Checks
+
+Tests use `tests/bootstrap.php` to ignore the real configuration cache and force
+SQLite `:memory:` before application providers boot. A test-only connection factory
+rejects persistent databases, including explicitly requested/reconfigured MySQL
+connections and disk-backed SQLite. `RefreshDatabase` operates only on in-memory
+test data. Run tests through this repository's `phpunit.xml` (`composer test`,
+`php artisan test`, or `php vendor/bin/phpunit`); the shared test base refuses to
+boot without the safety bootstrap. This guard covers Laravel database connections
+in tests, not direct PDO connections or manually run Artisan migration commands.
 
 ~~~
 php artisan test

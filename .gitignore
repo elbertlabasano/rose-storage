@@ -6,6 +6,7 @@
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/testing/*
+/storage/framework/backups/*
 /storage/framework/views/*
 /storage/logs/*
 /bootstrap/cache/*

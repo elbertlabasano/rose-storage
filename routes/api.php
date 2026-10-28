@@ -4,7 +4,14 @@ use App\Http\Controllers\AccessTokenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BucketController;
 use App\Http\Controllers\ObjectController;
+use App\Http\Controllers\BackupController;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('backups')->middleware(['auth:sanctum', \App\Http\Middleware\BackupAdministrator::class])->group(function () {
+    Route::get('/', [BackupController::class, 'index']);
+    Route::post('/prepare/{type}', [BackupController::class, 'prepare'])->whereIn('type', ['zip', 'sql'])->middleware('throttle:2,1');
+    Route::post('/{id}/download', [BackupController::class, 'downloadLink'])->whereUuid('id')->middleware('throttle:20,1');
+});
 
 Route::prefix('auth')->middleware('throttle:auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);

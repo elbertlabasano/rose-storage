@@ -38,10 +38,27 @@ class BucketController extends Controller
     {
         $this->assertOwner($request, $bucket);
 
-        $objects = $bucket->objects()
-            ->latest()
-            ->limit(50)
-            ->get(['id', 'bucket_id', 'original_name', 'mime_type', 'size', 'checksum', 'visibility', 'created_at'])
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:200'],
+            'visibility' => ['sometimes', Rule::in(['all', 'private', 'public'])],
+            'sort' => ['sometimes', Rule::in(['newest', 'oldest', 'name', 'largest'])],
+            'page' => ['sometimes', 'integer', 'min:1'],
+        ]);
+        $query = $bucket->objects();
+        if (filled($filters['search'] ?? null)) {
+            $query->where('original_name', 'like', '%'.$filters['search'].'%');
+        }
+        if (($filters['visibility'] ?? 'all') !== 'all') {
+            $query->where('visibility', $filters['visibility']);
+        }
+        [$column, $direction] = match ($filters['sort'] ?? 'newest') {
+            'oldest' => ['created_at', 'asc'], 'name' => ['original_name', 'asc'],
+            'largest' => ['size', 'desc'], default => ['created_at', 'desc'],
+        };
+        $page = $query->orderBy($column, $direction)->orderBy('id')
+            ->paginate(25, ['id', 'bucket_id', 'original_name', 'mime_type', 'size', 'checksum', 'visibility', 'created_at']);
+
+        $objects = $page->getCollection()
             ->map(fn ($object) => [
                 'id' => $object->id,
                 'bucket_id' => $object->bucket_id,
@@ -61,6 +78,12 @@ class BucketController extends Controller
                 'id' => $bucket->id,
                 'name' => $bucket->name,
                 'objects_count' => $bucket->objects()->count(),
+                'bytes' => (int) $bucket->objects()->sum('size'),
+                'private_count' => $bucket->objects()->where('visibility', 'private')->count(),
+                'pagination' => [
+                    'current_page' => $page->currentPage(), 'last_page' => $page->lastPage(),
+                    'total' => $page->total(), 'from' => $page->firstItem(), 'to' => $page->lastItem(),
+                ],
                 'objects' => $objects,
             ],
         ]);
