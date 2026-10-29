@@ -1,4 +1,4 @@
-<section id="loginPanel" class="rose-login" aria-label="Sign in to Rose Storage">
+<section id="loginPanel" class="rose-login" aria-label="Sign in to Rose Storage" hidden>
     <header class="login-header">
         <a class="brand-lockup" href="{{ route('home') }}" aria-label="Rose Storage home"><img src="{{ asset('brand/rose-logo-transparent.png') }}" alt="Rose Bakeshop" width="80" height="59"><span>Storage<span class="brand-caption">A home for every file</span></span></a>
         <a class="login-home-link" href="{{ route('home') }}">← Back to home</a>

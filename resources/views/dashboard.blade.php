@@ -49,6 +49,8 @@
 <body class="rose-dashboard min-h-screen bg-slate-50 text-slate-900 antialiased">
 
 @include('partials.brand-icons')
+<div id="sessionLoading" role="status" style="min-height:100vh;display:grid;place-items:center;color:#84665b">Loading your workspace…</div>
+<noscript><p>Enable JavaScript to sign in and use Rose Storage.</p></noscript>
 @include('partials.login')
 
 <header id="appHeader" class="hidden sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
@@ -173,6 +175,8 @@
     }
 
     function showApp(user) {
+        document.getElementById('sessionLoading').hidden = true;
+        loginPanel.hidden = true;
         loginPanel.classList.add('hidden');
         if (location.pathname === '/login') history.replaceState(null, '', '/dashboard');
         appPanel.classList.remove('hidden');
@@ -196,6 +200,8 @@
     }
 
     function showLogin() {
+        document.getElementById('sessionLoading').hidden = true;
+        loginPanel.hidden = false;
         loginPanel.classList.remove('hidden');
         if (location.pathname === '/dashboard' || location.pathname === '/backups') history.replaceState(null, '', '/login');
         document.querySelectorAll('[data-backup-nav]').forEach(function (button) { button.hidden = true; });
