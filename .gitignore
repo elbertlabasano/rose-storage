@@ -12,4 +12,5 @@
 /bootstrap/cache/*
 /public/hot
 /public/storage
+/public/.htaccess
 database/database.sqlite
