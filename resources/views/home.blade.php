@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Rose Storage keeps your images, documents, and application files organized in buckets, with controlled access and links you can share.">
     <title>Rose Storage — A home for every file</title>
-    <link rel="icon" href="{{ asset('brand/rose-logo.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/rose-brand.css') }}">
+    <link rel="icon" href="{{ asset('brand/rose-logo-transparent.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/rose-brand.css') . '?v=2' }}">
 </head>
 <body class="home-page">
 @include('partials.brand-icons')
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header shell">
-    <a class="brand-lockup" href="{{ route('home') }}" aria-label="Rose Storage home"><img src="{{ asset('brand/rose-logo.png') }}" alt="Rose Bakeshop" width="86" height="63"><span>Storage<span class="brand-caption">A home for every file</span></span></a>
+    <a class="brand-lockup" href="{{ route('home') }}" aria-label="Rose Storage home"><img src="{{ asset('brand/rose-logo-transparent.png') }}" alt="Rose Bakeshop" width="86" height="63"><span>Storage<span class="brand-caption">A home for every file</span></span></a>
     <nav aria-label="Main navigation"><a class="desktop-link" href="#about">What is object storage?</a><a class="desktop-link" href="#how-it-works">How it works</a><a class="button button-small" href="{{ route('login') }}">Sign in <svg><use href="#icon-arrow"/></svg></a></nav>
 </header>
 <main id="main">

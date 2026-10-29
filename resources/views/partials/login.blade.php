@@ -1,6 +1,6 @@
 <section id="loginPanel" class="rose-login" aria-label="Sign in to Rose Storage">
     <header class="login-header">
-        <a class="brand-lockup" href="{{ route('home') }}" aria-label="Rose Storage home"><img src="{{ asset('brand/rose-logo.png') }}" alt="Rose Bakeshop" width="80" height="59"><span>Storage<span class="brand-caption">A home for every file</span></span></a>
+        <a class="brand-lockup" href="{{ route('home') }}" aria-label="Rose Storage home"><img src="{{ asset('brand/rose-logo-transparent.png') }}" alt="Rose Bakeshop" width="80" height="59"><span>Storage<span class="brand-caption">A home for every file</span></span></a>
         <a class="login-home-link" href="{{ route('home') }}">← Back to home</a>
     </header>
     <div class="login-rings" aria-hidden="true"></div>
@@ -28,7 +28,7 @@
             <div id="loginStatus" role="status" aria-live="polite"></div>
             @if(config('sso.enabled'))
                 <div class="sso-divider"><span>or continue with</span></div>
-                <a class="sso-signin button" href="{{ route('sso.redirect') }}"><img src="{{ asset('brand/rose-logo.png') }}" alt="" width="34" height="25"><span>Sign in with Rose Account</span><svg aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+                <a class="sso-signin button" href="{{ route('sso.redirect') }}"><img src="{{ asset('brand/rose-logo-transparent.png') }}" alt="" width="34" height="25"><span>Sign in with Rose Account</span><svg aria-hidden="true"><use href="#icon-arrow"/></svg></a>
             @endif
             <p class="signin-help">Need access or a password reset?<br><strong>Contact your Rose Storage administrator.</strong></p>
             <div class="signin-rule" aria-hidden="true"></div>

@@ -6,8 +6,8 @@
     <meta name="referrer" content="no-referrer">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Rose Storage — Your workspace</title>
-    <link rel="icon" href="{{ asset('brand/rose-logo.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/rose-brand.css') }}">
+    <link rel="icon" href="{{ asset('brand/rose-logo-transparent.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/rose-brand.css') . '?v=2' }}">
     <link rel="stylesheet" href="{{ asset('css/backups.css') }}">
     <link rel="stylesheet" href="{{ asset('css/file-listing.css') }}">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -54,7 +54,7 @@
 <header id="appHeader" class="hidden sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
     <div class="mx-auto flex h-[72px] max-w-[1500px] items-center gap-6 px-4 sm:px-6 lg:px-10">
         <a href="/dashboard" class="flex shrink-0 items-center gap-3">
-            <img src="{{ asset('brand/rose-logo.png') }}" alt="Rose Bakeshop" class="h-10 w-14 rounded bg-white object-contain">
+            <img src="{{ asset('brand/rose-logo-transparent.png') }}" alt="Rose Bakeshop" class="h-10 w-14 rounded object-contain">
             <span class="hidden sm:block"><span class="block text-sm font-extrabold tracking-tight text-slate-950">Rose Storage</span><span class="block text-[10px] text-slate-400">Admin console</span></span>
         </a>
 
