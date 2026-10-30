@@ -61,6 +61,7 @@
         </a>
 
         <nav id="mainNav" class="hidden items-center gap-1 rounded-2xl bg-slate-100/80 p-1 md:flex">
+            <a href="{{ route('docs.storage-api') }}" class="text-sm font-bold text-slate-500 px-3 py-2">API guide</a>
             <button data-view="bucketsView" class="nav-button text-sm font-bold text-brand-700">Buckets</button>
             <button data-view="tokensView" class="nav-button text-sm font-bold text-slate-500 hover:text-slate-900">Access tokens</button>
             <button data-view="backupsView" data-backup-nav hidden class="nav-button text-sm font-bold text-slate-500 hover:text-slate-900">Backups</button>
@@ -79,6 +80,7 @@
         <div class="mobile-nav mb-5 flex gap-2 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm md:hidden">
             <button data-view="bucketsView" class="nav-button px-3 py-2 text-sm font-bold text-brand-700">Buckets</button>
             <button data-view="tokensView" class="nav-button px-3 py-2 text-sm font-bold text-slate-500">Access tokens</button>
+            <a href="{{ route('docs.storage-api') }}" class="px-3 py-2 text-sm font-bold text-slate-500">API guide</a>
             <button data-view="backupsView" data-backup-nav hidden class="nav-button px-3 py-2 text-sm font-bold text-slate-500">Backups</button>
         </div>
         <div id="appStatus" class="mb-4 min-h-5 text-sm"></div>

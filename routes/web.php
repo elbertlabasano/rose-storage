@@ -11,6 +11,7 @@ Route::post('/auth/keycloak/session', [KeycloakController::class, 'session'])->m
 Route::post('/auth/keycloak/logout', [KeycloakController::class, 'logout'])->middleware('auth:web')->name('sso.logout');
 
 Route::view('/', 'home')->name('home');
+Route::view('/docs/storage-api', 'storage-api')->name('docs.storage-api');
 Route::view('/login', 'dashboard')->name('login');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
 Route::view('/backups', 'dashboard')->name('backups');

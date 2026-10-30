@@ -48,6 +48,6 @@
     <section class="closing-section shell"><p class="eyebrow">A LITTLE SPACE FOR WHAT MATTERS</p><h2>Your files, <span class="script">right at home.</span></h2><p>Sign in with your Rose Storage account to get started.</p><a class="button" href="{{ route('login') }}">Go to sign in <svg><use href="#icon-arrow"/></svg></a></section>
 </main>
 @include('partials.brand-waves')
-<footer class="site-footer shell"><span>Rose Storage <span class="footer-dot">·</span> Part of the Rose family</span><a href="{{ route('login') }}">Storage dashboard ↗</a><span>© {{ date('Y') }} Rose Bakeshop</span></footer>
+<footer class="site-footer shell"><a href="{{ route('docs.storage-api') }}">API guide</a><span>Rose Storage <span class="footer-dot">·</span> Part of the Rose family</span><a href="{{ route('login') }}">Storage dashboard ↗</a><span>© {{ date('Y') }} Rose Bakeshop</span></footer>
 </body>
 </html>
